@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>QuickAgent — ONLINE v5.3</title>
+<meta name="theme-color" content="#050914">
+<style>
+:root{--bg:#050914;--fg:#e9eef7;--mut:#a3adc2;--line:rgba(255,255,255,.13);
+--brand:#7c4dff;--mint:#18ffd6;--pink:#ff77e9;--gold:#ffd166;--r:16px;--sh:0 18px 48px rgba(0,0,0,.45)}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto;overflow-x:hidden}
+#glow{position:fixed;inset:0;z-index:-3;background:
+radial-gradient(1100px 700px at 8% -10%, rgba(124,77,255,.35), transparent 60%),
+radial-gradient(900px 600px at 92% 110%, rgba(24,255,214,.25), transparent 60%),
+radial-gradient(900px 600px at -8% 120%, rgba(255,119,233,.18), transparent 60%);
+filter:saturate(1.2) brightness(1.05)}
+.grid{position:fixed;inset:0;background:
+linear-gradient(transparent 23px, rgba(255,255,255,.05) 24px, transparent 25px),
+linear-gradient(90deg, transparent 23px, rgba(255,255,255,.05) 24px, transparent 25px);
+background-size:25px 25px;mask-image:linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent);
+animation:gridPan 14s linear infinite;z-index:-2;opacity:.35}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 14px 120px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:40px;height:40px;border-radius:12px;background:
+radial-gradient(circle at 30% 30%, #fff, #c9f 20%, #79f 40%, transparent 41%),
+conic-gradient(from 0deg, rgba(124,77,255,.8), rgba(24,255,214,.8), rgba(255,119,233,.8), rgba(124,77,255,.8));
+box-shadow:0 0 28px rgba(124,77,255,.55), inset 0 0 22px rgba(24,255,214,.45)}
+.h1{font-weight:900;letter-spacing:.2px}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:linear-gradient(135deg, rgba(124,77,255,.18), rgba(24,255,214,.18));border:1px solid rgba(255,255,255,.22);color:#dbe0ff;font-size:12px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);margin-top:12px}
+.card .hd{padding:12px 14px;border-bottom:1px solid var(--line);font-weight:800}
+.card .bd{padding:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tab{padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));cursor:pointer;font-weight:800}
+.tab.active{box-shadow:0 0 0 2px rgba(124,77,255,.55);background:linear-gradient(135deg, rgba(124,77,255,.18), rgba(24,255,214,.18))}
+input,select,textarea{width:100%;padding:12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--fg)}
+textarea{min-height:96px}
+.btn{--glow:rgba(124,77,255,.55);display:inline-flex;gap:8px;align-items:center;justify-content:center;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(135deg, var(--brand), #18ffd6 140%);color:#fff;font-weight:900;cursor:pointer;text-decoration:none;box-shadow:0 8px 24px rgba(124,77,255,.35), inset 0 -1px 0 rgba(0,0,0,.25)}
+.btn.sec{background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));color:var(--fg)}
+.btn:active{transform:scale(.98);filter:brightness(.92);box-shadow:0 0 0 2px var(--glow), 0 10px 36px rgba(24,255,214,.35)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gridc{display:grid;gap:12px}
+.small{font-size:12px;color:var(--mut)}
+.thumb{max-height:92px;border:1px solid var(--line);border-radius:10px}
+.result a{color:#9fe}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#11162a;color:#fff;border:1px solid var(--line);padding:12px 16px;border-radius:14px;box-shadow:var(--sh);z-index:999;display:none}
+</style>
+</head>
+<body>
+<div id="glow"></div><div class="grid"></div>
+<div class="wrap">
+  <div class="header">
+    <div class="brand"><div class="logo"></div><div>
+      <div class="h1">QuickAgent — ONLINE v5.3</div>
+      <div class="pill">Image Scan (Google Vision) • Captions • Luganda • Mobile-first</div>
+    </div></div>
+    <button class="btn sec" id="howBtn">How to Use</button>
+  </div>
+
+  <div class="card">
+    <div class="hd">Dashboard</div>
+    <div class="bd">
+      <div class="tabs">
+        <div class="tab active" data-tab="scan">Scan Image</div>
+        <div class="tab" data-tab="caption">Captions</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scan -->
+  <div id="pane-scan" class="card">
+    <div class="hd">Capture → Scan on Google (Vision)</div>
+    <div class="bd gridc">
+      <div><label>Take/Upload Image</label><input id="img" type="file" accept="image/*" capture="environment"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="doScan">Scan Now</button>
+        <button class="btn sec" id="openGI">Open Google Images (manual)</button>
+      </div>
+      <div id="result" class="result"></div>
+    </div>
+  </div>
+
+  <!-- Caption -->
+  <div id="pane-caption" class="card" style="display:none">
+    <div class="hd">AI Caption (EN/Luganda)</div>
+    <div class="bd gridc">
+      <div class="row">
+        <div><label>Title</label><input id="title" placeholder="e.g., Hand Mixer 300W"></div>
+        <div><label>Price (UGX)</label><input id="price" placeholder="55000"></div>
+      </div>
+      <div class="row">
+        <div><label>Phone</label><input id="phone" placeholder="0758642825"></div>
+        <div><label>@username</label><input id="user" placeholder="@yourhandle"></div>
+      </div>
+      <div class="row">
+        <div><label>Language</label>
+          <select id="lang">
+            <option value="en">English</option>
+            <option value="lg">Luganda</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" id="genCap">Generate Caption</button>
+      <textarea id="capOut" placeholder="Caption will appear here…"></textarea>
+      <div style="display:flex;gap:8px"><button class="btn sec" id="copyCap">Copy</button></div>
+      <div class="small">Note: requires OPENAI_API_KEY on the server for best results. Without it, this page can still work with manual captions.</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const byId = id => document.getElementById(id);
+function toast(msg){const t=byId('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
+
+// Tabs
+document.querySelectorAll('.tab').forEach(el=>el.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('[id^="pane-"]').forEach(p=>p.style.display='none');
+  byId('pane-'+el.dataset.tab).style.display='block';
+});
+
+// Manual Google Images
+byId('openGI').onclick=()=>{ window.open('https://www.google.com/imghp?hl=en&ogbl','_blank'); };
+
+// Scan handler
+byId('doScan').onclick=async()=>{
+  const file = byId('img').files[0];
+  if(!file){ alert('Choose a photo first.'); return; }
+  const fd = new FormData(); fd.append('file', file);
+  byId('result').innerHTML='Scanning… please wait';
+  try{
+    const resp = await fetch('/api/scan', { method:'POST', body: fd });
+    const data = await resp.json();
+    if(data.error){ byId('result').textContent = data.error; return; }
+
+    const { guess, bestLabels=[], similar=[], pages=[] } = data;
+    let html = '';
+    if(guess) html += `<div><b>Best guess:</b> ${guess}</div>`;
+    if(bestLabels.length) html += `<div><b>Other guesses:</b> ${bestLabels.join(', ')}</div>`;
+    if(similar.length){
+      html += `<div style="margin-top:8px"><b>Visually similar (top 4):</b><div style="display:flex;gap:8px;flex-wrap:wrap">`;
+      similar.slice(0,4).forEach(s=>{ html += `<a href="${s.url}" target="_blank"><img class="thumb" src="${s.url}"></a>` });
+      html += `</div></div>`;
+    }
+    if(pages.length){
+      html += `<div style="margin-top:8px"><b>Pages with matching images:</b><ul>`;
+      pages.forEach(p=>{ html += `<li><a href="${p.url}" target="_blank">${p.pageTitle||p.url}</a></li>` });
+      html += `</ul></div>`;
+    }
+    byId('result').innerHTML = html || 'No results';
+  }catch(e){
+    byId('result').textContent = 'Scan failed: ' + e.message;
+  }
+};
+
+// Generate caption
+byId('genCap').onclick=async()=>{
+  const title = byId('title').value || 'Product';
+  const price = byId('price').value || '';
+  const phone = byId('phone').value || '';
+  const username = byId('user').value || '';
+  const lang = byId('lang').value || 'en';
+  try{
+    const resp = await fetch('/api/caption', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ title, price, phone, username, lang })
+    });
+    const data = await resp.json();
+    if(data.error){ byId('capOut').value = 'Server error: ' + data.error; return; }
+    byId('capOut').value = data.caption || 'No caption';
+  }catch(e){
+    byId('capOut').value = 'Failed: ' + e.message;
+  }
+};
+byId('copyCap').onclick=()=>{ const t=byId('capOut'); t.select(); document.execCommand('copy'); toast('Caption copied'); };
+</script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>QuickAgent — Business Studio v4 (Phone‑First)</title>
+<meta name="theme-color" content="#050914">
+<style>
+:root{--bg:#050914;--fg:#e9eef7;--mut:#a3adc2;--line:rgba(255,255,255,.12);
+--brand:#7c4dff;--mint:#18ffd6;--pink:#ff77e9;--gold:#ffd166;--r:16px;--sh:0 18px 48px rgba(0,0,0,.45)}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto;overflow-x:hidden}
+#fx,#gridGlow{position:fixed;inset:0;z-index:-2}
+#gridGlow{background:radial-gradient(1200px 700px at 10% -10%, rgba(124,77,255,.35), transparent 60%),radial-gradient(900px 600px at 90% 110%, rgba(24,255,214,.25), transparent 60%),radial-gradient(900px 600px at -10% 120%, rgba(255,119,233,.18), transparent 60%);filter:saturate(1.2) brightness(1.05)}
+#fx{background:radial-gradient(closest-side at 50% 120%, rgba(0,0,0,.0), rgba(0,0,0,.25) 70%, rgba(0,0,0,.55));pointer-events:none}
+#starfield{position:fixed;inset:0;z-index:-3;filter:contrast(130%) blur(.2px);opacity:.8}
+.gridLines{position:fixed;inset:0;background:linear-gradient(transparent 23px, rgba(255,255,255,.05) 24px, transparent 25px),linear-gradient(90deg, transparent 23px, rgba(255,255,255,.05) 24px, transparent 25px);background-size:25px 25px;mask-image:linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent);animation:gridPan 14s linear infinite;z-index:-1;opacity:.35}
+@keyframes gridPan{0%{transform:translateY(0)}100%{transform:translateY(25px)}}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 14px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:40px;height:40px;border-radius:12px;background:radial-gradient(circle at 30% 30%, #fff, #c9f 20%, #79f 40%, transparent 41%),conic-gradient(from 0deg, rgba(124,77,255,.8), rgba(24,255,214,.8), rgba(255,119,233,.8), rgba(124,77,255,.8));box-shadow:0 0 28px rgba(124,77,255,.55), inset 0 0 22px rgba(24,255,214,.45)}
+.h1{font-weight:900;letter-spacing:.2px}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:linear-gradient(135deg, rgba(124,77,255,.18), rgba(24,255,214,.18));border:1px solid rgba(255,255,255,.22);color:#dbe0ff;font-size:12px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);margin-top:12px}
+.card .hd{padding:12px 14px;border-bottom:1px solid var(--line);font-weight:800}
+.card .bd{padding:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tab{padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));cursor:pointer;font-weight:800}
+.tab.active{box-shadow:0 0 0 2px rgba(124,77,255,.55);background:linear-gradient(135deg, rgba(124,77,255,.18), rgba(24,255,214,.18))}
+input,select,textarea{width:100%;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--fg)}
+textarea{min-height:96px}
+.btn{--glow:rgba(124,77,255,.55);display:inline-flex;gap:8px;align-items:center;justify-content:center;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(135deg, var(--brand), #18ffd6 140%);color:#fff;font-weight:900;cursor:pointer;text-decoration:none;box-shadow:0 8px 24px rgba(124,77,255,.35), inset 0 -1px 0 rgba(0,0,0,.25)}
+.btn.sec{background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));color:var(--fg)}
+.btn[data-holding="1"]{transform:scale(.98);filter:brightness(.92);box-shadow:0 0 0 2px var(--glow), 0 10px 36px rgba(24,255,214,.35)}
+.scan{position:relative;display:grid;place-items:center;height:170px;border:1px dashed var(--line);border-radius:12px;overflow:hidden;margin-top:6px}
+.scan::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%, rgba(24,255,214,.25) 50%, transparent 60%);animation:scan 2s linear infinite}
+@keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+.progress{height:10px;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;overflow:hidden}.progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg, var(--brand), var(--mint));transition:width .25s}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid{display:grid;gap:12px}
+@media(min-width:900px){.grid-2{grid-template-columns:1.1fr 1fr}}
+.previewVideo{max-width:100%;border-radius:12px;border:1px solid var(--line)}
+.facePrev{max-height:84px;border-radius:50%;border:2px solid var(--line)}
+.thumb{max-height:92px;border:1px solid var(--line);border-radius:10px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#11162a;color:#fff;border:1px solid var(--line);padding:12px 16px;border-radius:14px;box-shadow:var(--sh);z-index:999;display:none}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:9999}
+.modal>div{max-width:680px;width:100%;background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh)}
+.modal .hd{padding:12px 14px;border-bottom:1px solid var(--line);font-weight:900}
+.modal .bd{padding:14px}
+</style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div id="gridGlow"></div>
+<div id="fx"></div>
+<div class="gridLines"></div>
+<div class="wrap">
+  <div class="header">
+    <div class="brand"><div class="logo"></div><div>
+      <div class="h1">QuickAgent — Business Studio v4</div>
+      <div class="pill">Phone‑First • High‑FX • Neon</div>
+    </div></div>
+    <button class="btn sec" id="howBtn">How to Use</button>
+  </div>
+  <div class="card">
+    <div class="hd">Dashboard</div>
+    <div class="bd">
+      <div class="tabs">
+        <div class="tab active" data-tab="connect">Connect</div>
+        <div class="tab" data-tab="studio">Business Studio</div>
+        <div class="tab" data-tab="queue">Queue</div>
+      </div>
+    </div>
+  </div>
+  <div id="pane-connect" class="card">
+    <div class="hd">Connect Social Accounts</div>
+    <div class="bd grid">
+      <div class="row">
+        <div><label>Facebook Page URL</label><input id="link_fb" placeholder="https://facebook.com/yourpage"></div>
+        <div><label>Facebook Marketplace URL</label><input id="link_fbm" placeholder="https://facebook.com/marketplace/..."></div>
+      </div>
+      <div class="row">
+        <div><label>Instagram URL</label><input id="link_ig" placeholder="https://instagram.com/yourhandle"></div>
+        <div><label>TikTok URL</label><input id="link_tt" placeholder="https://www.tiktok.com/@yourname"></div>
+      </div>
+      <div class="row">
+        <div><label>WhatsApp Link</label><input id="link_wa" placeholder="https://wa.me/2567…?text=Hi"></div>
+        <div><label>Posting Cycle</label>
+          <select id="cycleSel">
+            <option value="off">Off</option>
+            <option value="20">Every 20 minutes (remind)</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn" id="saveLinks">Save Links</button>
+        <span id="connStatus" class="pill">not connected</span>
+        <a class="btn sec" target="_blank" id="openFBM">Open Marketplace</a>
+        <a class="btn sec" target="_blank" id="openIG">Open Instagram</a>
+        <a class="btn sec" target="_blank" id="openTT">Open TikTok</a>
+      </div>
+    </div>
+  </div>
+  <div id="pane-studio" class="card" style="display:none">
+    <div class="hd">Reverse Search → 4 Best → Caption → Voice → Avatar → Video</div>
+    <div class="bd grid grid-2">
+      <div>
+        <label>Take/Upload Product Photo</label>
+        <input type="file" id="bzShot" accept="image/*" capture="environment">
+        <div class="scan" id="scanBox" style="display:none">
+          <div>
+            <div style="text-align:center">Scanning image…</div>
+            <div class="progress" style="margin-top:8px"><i id="pbar"></i></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <button class="btn sec hold" id="scanBtn">Scan → Google Images</button>
+          <a class="btn sec" target="_blank" href="https://www.google.com/imghp?hl=en&ogbl">Open Google Images (upload)</a>
+        </div>
+        <div style="margin-top:6px;color:var(--mut);font-size:13px">In Google Images: tap the camera icon → <b>Upload</b> → choose the same photo.</div>
+        <label style="margin-top:10px;display:block">Add 4 Photos (your saved best)</label>
+        <input type="file" id="best4" accept="image/*" multiple>
+        <div id="best4thumbs" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"></div>
+        <label style="margin-top:10px;display:block">Avatar Face (optional)</label>
+        <input type="file" id="face" accept="image/*">
+        <img id="facePrev" class="facePrev" style="display:none;margin-top:6px">
+      </div>
+      <div>
+        <div class="row">
+          <div><label>Price (UGX)</label><input id="price" type="number" placeholder="45000"></div>
+          <div><label>Language</label><select id="lang"><option value="en">English</option><option value="lg">Luganda</option></select></div>
+        </div>
+        <label style="margin-top:8px;display:block">Phone (watermark & caption)</label>
+        <input id="bzPhone" placeholder="0758642825">
+        <label style="margin-top:8px;display:block">@username (watermark)</label>
+        <input id="bzUser" placeholder="@yourhandle">
+        <label style="margin-top:10px;display:block">Auto Caption</label>
+        <textarea id="caption" placeholder="Caption appears here…"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <button class="btn sec hold" id="capGen">Generate Caption</button>
+          <button class="btn sec hold" id="capLg">Translate → Luganda</button>
+          <button class="btn sec" id="capCopy">Copy Caption</button>
+        </div>
+        <div style="margin-top:10px;border-top:1px dashed var(--line);padding-top:10px">
+          <div class="row">
+            <div>
+              <label>Voice (required once)</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn sec" id="recStart">● Record</button>
+                <button class="btn sec" id="recStop">■ Stop</button>
+                <button class="btn sec" id="recPlay">▶ Play</button>
+                <button class="btn sec" id="recClear">✖ Clear</button>
+              </div>
+            </div>
+            <div>
+              <label>Video Duration (sec)</label>
+              <input id="dur" type="number" value="10" min="6" max="30">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+            <button class="btn hold" id="makeVid">🎬 Create Video</button>
+            <a id="downloadVid" class="btn sec" style="display:none" download="quickagent_market.webm">Download Video</a>
+          </div>
+          <video id="previewVid" class="previewVideo" controls style="margin-top:8px;display:none"></video>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="pane-queue" class="card" style="display:none">
+    <div class="hd">Scheduled & Posted</div>
+    <div class="bd"><table class="list" id="queue" style="width:100%"></table></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+<div id="howModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="howTitle">
+  <div>
+    <div class="hd" id="howTitle">How to Use</div>
+    <div class="bd">
+      <ol>
+        <li>Open <b>Connect</b> and paste your real links (FB Page/Marketplace, Instagram, TikTok, WhatsApp). Tap <b>Save Links</b>.</li>
+        <li>Go to <b>Business Studio</b>: Take/Upload product photo → tap <b>Scan → Google Images</b>. In Google Images, upload the same photo and save your 4 best matching photos.</li>
+        <li>Back here, tap <b>Add 4 Photos</b>. Set <b>Price</b>, <b>Phone</b>, and <b>@username</b>.</li>
+        <li>Tap <b>Generate Caption</b> → <b>Translate → Luganda</b> (optional) → <b>Copy Caption</b>.</li>
+        <li>Tap <b>Record</b> to save your voice once. (We reuse it for all videos.)</li>
+        <li>Optional: Add your face photo for a talking avatar overlay.</li>
+        <li>Tap <b>Create Video</b> → wait → <b>Download Video</b> and post to your pages (use your own links).</li>
+      </ol>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn sec" id="closeHow">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const LS={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+const byId=(id)=>document.getElementById(id);
+function toast(msg){const t=byId('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
+function isUrl(u){try{const x=new URL(u);return ['http:','https:'].includes(x.protocol)}catch{return false}}
+function wireHold(btn, cb){let hold=false,t; const set=(v)=>btn.dataset.holding=v?1:0;
+  const start=(e)=>{hold=true; set(true); t=setTimeout(()=>{ if(hold) cb(e); }, 380)};
+  const end=()=>{hold=false; set(false); clearTimeout(t)};
+  btn.addEventListener('touchstart', start); btn.addEventListener('mousedown', start);
+  ['touchend','touchcancel','mouseup','mouseleave'].forEach(ev=>btn.addEventListener(ev,end));
+}
+document.querySelectorAll('.tab').forEach(el=>el.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('[id^="pane-"]').forEach(p=>p.style.display='none');
+  byId('pane-'+el.dataset.tab).style.display='block';
+});
+byId('howBtn').onclick=()=>byId('howModal').style.display='flex';
+byId('closeHow').onclick=()=>byId('howModal').style.display='none';
+
+byId('saveLinks').onclick=saveLinks;
+function saveLinks(){
+  const links={fb:byId('link_fb').value,fbm:byId('link_fbm').value,ig:byId('link_ig').value,tt:byId('link_tt').value,wa:byId('link_wa').value};
+  LS.set('links',links);
+  const valid=Object.values(links).filter(Boolean).some(isUrl);
+  const st=byId('connStatus');st.textContent=valid?'connected':'not connected';
+  byId('openFBM').href=links.fbm||links.fb||'#';
+  byId('openIG').href=links.ig||'#';
+  byId('openTT').href=links.tt||'#';
+  toast('Links saved');
+}
+
+let shotName='item';
+wireHold(byId('scanBtn'), scanToGoogle);
+function scanToGoogle(){
+  const f=byId('bzShot').files[0]; if(!f) return alert('Pick or take a photo first');
+  shotName=(f.name.split('.')[0]||'item').toLowerCase().replace(/[_-]+/g,' ');
+  byId('scanBox').style.display='grid'; progressTo(100,900);
+  setTimeout(()=>{ window.open('https://www.google.com/imghp?hl=en&ogbl','_blank'); },950);
+}
+function progressTo(target,dur){const bar=byId('pbar');bar.style.width='0%';let t=0;const step=16;const total=dur/step;const id=setInterval(()=>{
+  t++;const pct=Math.min(100,Math.floor((t/total)*target));bar.style.width=pct+'%'; if(pct>=100){clearInterval(id); setTimeout(()=>byId('scanBox').style.display='none',200)}},step)}
+
+byId('best4').addEventListener('change', e=>{
+  const files = Array.from(e.target.files||[]).slice(0,4);
+  const box = byId('best4thumbs'); box.innerHTML='';
+  files.forEach(f=>{const r=new FileReader(); r.onload=()=>{const im=new Image(); im.src=r.result; im.className='thumb'; box.appendChild(im)}; r.readAsDataURL(f)})
+});
+
+wireHold(byId('capGen'), genCaption);
+wireHold(byId('capLg'), toLuganda);
+byId('capCopy').onclick=()=>{const t=byId('caption'); t.select(); document.execCommand('copy'); toast('Caption copied')}
+
+function genCaption(){
+  const price = byId('price').value||''; const phone = byId('bzPhone').value||''; const wa = LS.get('links',{}).wa||''; const u = byId('bzUser').value||'';
+  const tag = (shotName||'item').split(' ')[0]; const hash = ['#deal','#quality','#kampala','#trending','#quickagent'].join(' ');
+  const en = `🔥 ${toTitle(tag)} for sale! Clean & reliable. Price: UGX ${price}. WhatsApp: ${wa||phone}. ${u} ${hash}`;
+  byId('caption').value=en;
+}
+function toLuganda(){
+  const text = byId('caption').value||'';
+  const lg = text.replace(/for sale!/gi,'kugula!').replace(/Clean & reliable/gi,'kyeewuunya era kirungi').replace(/Price:/gi,'Omuwendo:').replace(/WhatsApp:/gi,'WhatsApp:');
+  byId('caption').value=lg;
+}
+function toTitle(s){return (s||'').replace(/\b\w/g,c=>c.toUpperCase())}
+
+let mediaRec=null, chunks=[];
+byId('recStart').onclick=startRec;
+byId('recStop').onclick=stopRec;
+byId('recPlay').onclick=playSaved;
+byId('recClear').onclick=clearSaved;
+
+async function startRec(){
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    mediaRec = new MediaRecorder(stream);
+    chunks=[];
+    mediaRec.ondataavailable=(e)=>{if(e.data.size>0)chunks.push(e.data)};
+    mediaRec.onstop=()=>{
+      const blob = new Blob(chunks, {type:'audio/webm'});
+      const rd = new FileReader(); rd.onload=()=>{ LS.set('savedVoice', rd.result); toast('Voice saved') }; rd.readAsDataURL(blob);
+    };
+    mediaRec.start(); toast('Recording… speak your product pitch');
+  }catch(e){alert('Mic permission needed')}
+}
+function stopRec(){ if(mediaRec){ mediaRec.stop(); toast('Recording stopped'); } }
+function playSaved(){
+  const b64 = LS.get('savedVoice',null); if(!b64) return alert('No saved voice yet'); new Audio(b64).play();
+}
+function clearSaved(){ LS.set('savedVoice',null); toast('Voice cleared') }
+
+byId('face').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader(); r.onload=()=>{ const im=byId('facePrev'); im.src=r.result; im.style.display='inline-block' }; r.readAsDataURL(f);
+});
+
+wireHold(byId('makeVid'), makeVideo);
+async function makeVideo(){
+  const saved = LS.get('savedVoice',null); if(!saved){ return alert('Please record your voice first (required).') }
+  const files = Array.from(byId('best4').files||[]).slice(0,4);
+  if(files.length<1) return alert('Add up to 4 photos');
+  const dur = Math.max(6, Math.min(30, parseInt(byId('dur').value||'10')));
+  const phone = byId('bzPhone').value||''; const user = byId('bzUser').value||''; const price = byId('price').value||'';
+  const caption = byId('caption').value||'';
+  const imgs = await Promise.all(files.map(fileToImage));
+
+  const canvas=document.createElement('canvas'); canvas.width=720; canvas.height=1280;
+  const ctx=canvas.getContext('2d'); const fps=30; const vStream=canvas.captureStream(fps);
+
+  const ac=new (window.AudioContext||window.webkitAudioContext)();
+  const resp = await fetch(saved); const ab=await resp.arrayBuffer(); const audioBuf=await ac.decodeAudioData(ab);
+  const src=ac.createBufferSource(); src.buffer=audioBuf; const dest=ac.createMediaStreamDestination(); src.connect(dest); src.start(0);
+
+  const mix=new MediaStream(); vStream.getVideoTracks().forEach(t=>mix.addTrack(t)); dest.stream.getAudioTracks().forEach(t=>mix.addTrack(t));
+
+  const rec=new MediaRecorder(mix,{mimeType:'video/webm;codecs=vp9,opus'});
+  const chunksV=[]; rec.ondataavailable=e=>chunksV.push(e.data); rec.onstop=()=>{
+    const blob=new Blob(chunksV,{type:'video/webm'}); const url=URL.createObjectURL(blob);
+    const v=byId('previewVid'); v.src=url; v.style.display='block'; const dl=byId('downloadVid'); dl.href=url; dl.style.display='inline-flex'; toast('Video ready 🎬');
+  }; rec.start();
+
+  const start=performance.now(); const seg=dur/Math.max(1,imgs.length);
+  let faceImg=null; const facePrev=byId('facePrev'); if(facePrev && facePrev.src) { faceImg = await loadImage(facePrev.src) }
+
+  async function draw(){
+    const t=(performance.now()-start)/1000; if(t>dur){ rec.stop(); return; }
+    const gx=360 + Math.sin(t*.7)*40, gy=300 + Math.cos(t*.6)*30;
+    const grad=ctx.createRadialGradient(gx,gy,120, 360,640,900);
+    grad.addColorStop(0,'#0a0f22'); grad.addColorStop(1,'#060913'); ctx.fillStyle=grad; ctx.fillRect(0,0,canvas.width,canvas.height);
+    const idx = Math.min(imgs.length-1, Math.floor(t/seg)); const localT = (t - idx*seg)/seg; const im = imgs[idx];
+    const scale = 1.05 + 0.12*Math.sin(localT*Math.PI*2);
+    const iw=im.width*scale, ih=im.height*scale; const cx=(canvas.width - iw)/2, cy=(canvas.height - ih)/2;
+    ctx.save(); ctx.globalAlpha=0.98; ctx.drawImage(im, cx, cy, iw, ih); ctx.restore();
+    ctx.strokeStyle='rgba(124,77,255,.45)'; ctx.lineWidth=4; ctx.strokeRect(10,10,canvas.width-20,canvas.height-20);
+    const g=ctx.createLinearGradient(0,canvas.height-280,0,canvas.height);
+    g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,0.6)'); ctx.fillStyle=g; ctx.fillRect(0,canvas.height-280,canvas.width,280);
+    ctx.fillStyle='white'; ctx.font='bold 36px system-ui'; wrapText(ctx, caption||'QuickAgent', 24, canvas.height-220, 672, 42);
+    ctx.font='bold 30px system-ui'; ctx.fillText(`UGX ${price}`, 24, canvas.height-56);
+    ctx.textAlign='right'; ctx.font='bold 24px system-ui'; ctx.fillText(`${phone}  ${user}`, canvas.width-24, canvas.height-56); ctx.textAlign='left';
+    if(faceImg){
+      const baseR=92; const r = baseR*(0.96 + 0.06*Math.abs(Math.sin(t*4)));
+      const x=canvas.width-24-r, y=24+r;
+      ctx.save(); ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.closePath(); ctx.clip(); ctx.drawImage(faceImg, x-r, y-r, 2*r, 2*r); ctx.restore();
+      ctx.strokeStyle='rgba(255,255,255,.85)'; ctx.lineWidth=6; ctx.beginPath(); ctx.arc(x,y,r+4,0,Math.PI*2); ctx.stroke();
+      ctx.strokeStyle='rgba(93,232,211,.85)'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(x,y,r+10,0,Math.PI*2); ctx.stroke();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){const words=(text||'').split(/\s+/);let line='';let yy=y;for(let n=0;n<words.length;n++){const test=line+words[n]+" ";const m=ctx.measureText(test);if(m.width>maxWidth&&n>0){ctx.fillText(line,x,yy);line=words[n]+" ";yy+=lineHeight}else{line=test}}ctx.fillText(line,x,yy)}
+async function fileToImage(file){return new Promise((res)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>res(img);img.src=r.result};r.readAsDataURL(file)})}
+async function loadImage(src){return new Promise((res)=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>res(img);img.src=src})}
+
+function renderQueue(){const posts=LS.get('posts',[]);const head=`<tr><th>When</th><th>Platforms</th><th>Type</th><th>Status</th></tr>`;const rows=posts.map(p=>`<tr><td>${p.when}</td><td>${p.platforms.join(', ')}</td><td>${p.type}</td><td>${p.status}</td></tr>`).join('');byId('queue').innerHTML=head+rows}
+renderQueue();
+
+(function stars(){
+  const c=byId('starfield'); const ctx=c.getContext('2d'); const DPR=window.devicePixelRatio||1;
+  function resize(){c.width=innerWidth*DPR; c.height=innerHeight*DPR}
+  resize(); addEventListener('resize', resize);
+  const N=180; const stars=[];
+  for(let i=0;i<N;i++){stars.push({x:Math.random()*c.width,y:Math.random()*c.height,z:Math.random()*1.5+0.5,s:Math.random()*1.8+0.4})}
+  function tick(t){
+    ctx.clearRect(0,0,c.width,c.height);
+    for(const st of stars){
+      st.x += (st.z*0.25); if(st.x>c.width) st.x=0;
+      st.y += Math.sin((st.x+ t*0.05)/80)*0.2;
+      ctx.fillStyle = `rgba(255,255,255,${0.5+0.5*Math.sin((st.x+t*.01)/50)})`;
+      ctx.beginPath(); ctx.arc(st.x, st.y, st.s, 0, Math.PI*2); ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  } requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
